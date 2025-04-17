@@ -20,6 +20,7 @@ class ApiHeader {
     required this.resultsCount,
   });
 
-  factory ApiHeader.fromJson(Map<String, dynamic> json) =>
-      _$ApiHeaderFromJson(json);
+  factory ApiHeader.fromJson(Map<String, dynamic> json) => _$ApiHeaderFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ApiHeaderToJson(this);
 }
