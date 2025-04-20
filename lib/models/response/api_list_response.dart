@@ -5,11 +5,11 @@ part 'api_list_response.g.dart';
 
 @JsonSerializable(genericArgumentFactories: true)
 class ApiListResponse<T> {
-  final ApiHeader header;
+  final ApiHeader headers;
   final List<T> results;
 
   ApiListResponse({
-    required this.header,
+    required this.headers,
     required this.results,
   });
 

@@ -1,16 +1,17 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Quyền cần thiết -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <!-- Nếu Android 13+ -->
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+<manifest xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- ADD THESE TWO PERMISSIONS -->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <!-- ALSO ADD THIS PERMISSION IF TARGETING SDK 34 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"
+        tools:ignore="SystemPermissionTypo" />
     <application
         android:label="wathef"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
-            android:name=".MainActivity"
+            android:name="com.ryanheise.audioservice.AudioServiceActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:taskAffinity=""
@@ -37,16 +38,18 @@
             android:name="flutterEmbedding"
             android:value="2" />
 
+        <!-- ADD THIS "SERVICE" element -->
         <service android:name="com.ryanheise.audioservice.AudioService"
             android:foregroundServiceType="mediaPlayback"
-            android:exported="true">
+            android:exported="true" tools:ignore="Instantiatable">
             <intent-filter>
                 <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
         </service>
 
+        <!-- ADD THIS "RECEIVER" element -->
         <receiver android:name="com.ryanheise.audioservice.MediaButtonReceiver"
-            android:exported="true">
+            android:exported="true" tools:ignore="Instantiatable">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>

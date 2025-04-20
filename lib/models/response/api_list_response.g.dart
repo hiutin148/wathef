@@ -11,7 +11,7 @@ ApiListResponse<T> _$ApiListResponseFromJson<T>(
   T Function(Object? json) fromJsonT,
 ) =>
     ApiListResponse<T>(
-      header: ApiHeader.fromJson(json['header'] as Map<String, dynamic>),
+      headers: ApiHeader.fromJson(json['headers'] as Map<String, dynamic>),
       results: (json['results'] as List<dynamic>).map(fromJsonT).toList(),
     );
 
@@ -20,6 +20,6 @@ Map<String, dynamic> _$ApiListResponseToJson<T>(
   Object? Function(T value) toJsonT,
 ) =>
     <String, dynamic>{
-      'header': instance.header,
+      'headers': instance.headers,
       'results': instance.results.map(toJsonT).toList(),
     };

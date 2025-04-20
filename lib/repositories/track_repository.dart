@@ -1,8 +1,9 @@
 import 'package:wathef/models/response/api_list_response.dart';
-import 'package:wathef/network/api_client.dart';
+import 'package:wathef/models/track/track.dart';
+import 'package:wathef/service/network/api_client.dart';
 
 abstract class TrackRepository {
-  Future<ApiListResponse> getTracks();
+  Future<ApiListResponse<Track>> getTracks();
 }
 
 class TrackRepositoryImpl implements TrackRepository {
@@ -11,7 +12,8 @@ class TrackRepositoryImpl implements TrackRepository {
   TrackRepositoryImpl({required this.apiService});
 
   @override
-  Future<ApiListResponse> getTracks() async {
-    return apiService.getPopularTracks();
+  Future<ApiListResponse<Track>> getTracks() async {
+    final result = await apiService.getPopularTracks();
+    return result;
   }
 }
