@@ -43,6 +43,7 @@ class Track {
   final String prourl;
   final String shorturl;
   final String shareurl;
+  final String image;
 
   /// `waveform` là JSON string nên cần custom getter/setter
   @JsonKey(fromJson: _waveformFromJson, toJson: _waveformToJson)
@@ -67,6 +68,7 @@ class Track {
     required this.shorturl,
     required this.shareurl,
     required this.waveform,
+    required this.image,
   });
 
   factory Track.fromJson(Map<String, dynamic> json) => _$TrackFromJson(json);

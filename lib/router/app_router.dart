@@ -1,5 +1,5 @@
 import 'package:go_router/go_router.dart';
-import 'package:wathef/ui/screens/home/home_page.dart';
+import 'package:wathef/ui/screens/main/main_page.dart';
 class AppRouter {
   static const String home = '/';
   static const String login = '/login';
@@ -12,7 +12,7 @@ class AppRouter {
     routes: [
       GoRoute(
         path: '/',
-        builder: (context, state) => HomePage(),
+        builder: (context, state) => MainPage(),
       ),
     ],
   );

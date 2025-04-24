@@ -25,6 +25,7 @@ Track _$TrackFromJson(Map<String, dynamic> json) => Track(
       shorturl: json['shorturl'] as String,
       shareurl: json['shareurl'] as String,
       waveform: Track._waveformFromJson(json['waveform'] as String),
+      image: json['image'] as String,
     );
 
 Map<String, dynamic> _$TrackToJson(Track instance) => <String, dynamic>{
@@ -45,5 +46,6 @@ Map<String, dynamic> _$TrackToJson(Track instance) => <String, dynamic>{
       'prourl': instance.prourl,
       'shorturl': instance.shorturl,
       'shareurl': instance.shareurl,
+      'image': instance.image,
       'waveform': Track._waveformToJson(instance.waveform),
     };
