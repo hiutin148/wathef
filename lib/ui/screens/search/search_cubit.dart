@@ -12,7 +12,7 @@ class SearchCubit extends Cubit<SearchState> {
     try {
       //Todo: add API calls
       emit(state.copyWith(loadDataStatus: LoadStatus.success));
-    } catch (e, s) {
+    } catch (e) {
       //Todo: should print exception here
       emit(state.copyWith(loadDataStatus: LoadStatus.failure));
     }

@@ -5,7 +5,6 @@ import 'app_colors.dart';
 class AppTheme {
   AppTheme._();
 
-  /// 1. ColorScheme từ seed (Material 3 tự sinh palette)
   static final ColorScheme _lightScheme = ColorScheme.fromSeed(
     seedColor: AppColors.accent,
     brightness: Brightness.light,
@@ -15,39 +14,6 @@ class AppTheme {
     seedColor: AppColors.accent,
     brightness: Brightness.dark,
   );
-
-  // /// 2. Hoặc khai báo thủ công nếu muốn ép sát mockup hơn:
-  // static const ColorScheme lightSchemeManual = ColorScheme(
-  //   brightness: Brightness.light,
-  //   primary: AppColors.accent,
-  //   onPrimary: Colors.white,
-  //   secondary: AppColors.textSecondaryLight,
-  //   onSecondary: Colors.white,
-  //   tertiary: Color(0xFFFFA726),
-  //   onTertiary: Colors.white,
-  //   background: Colors.white,
-  //   onBackground: AppColors.textPrimaryLight,
-  //   surface: Colors.white,
-  //   onSurface: AppColors.textPrimaryLight,
-  //   error: Color(0xFFB00020),
-  //   onError: Colors.white,
-  // );
-  //
-  // static const ColorScheme darkSchemeManual = ColorScheme(
-  //   brightness: Brightness.dark,
-  //   primary: AppColors.accent,
-  //   onPrimary: Colors.black,
-  //   secondary: AppColors.textSecondaryDark,
-  //   onSecondary: Colors.black,
-  //   tertiary: Color(0xFFFFA726),
-  //   onTertiary: Colors.black,
-  //   background: Color(0xFF121212),
-  //   onBackground: AppColors.textPrimaryDark,
-  //   surface: Color(0xFF1E1E1E),
-  //   onSurface: AppColors.textPrimaryDark,
-  //   error: Color(0xFFCF6679),
-  //   onError: Colors.black,
-  // );
 
   static final ThemeData lightTheme = ThemeData(
     useMaterial3: true,

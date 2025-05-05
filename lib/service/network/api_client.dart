@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:wathef/core/consts/api_consts.dart';
+import 'package:wathef/models/playlist/playlist.dart';
 import 'package:wathef/models/response/api_list_response.dart';
 import 'package:wathef/models/track/track.dart';
 
@@ -14,9 +15,18 @@ abstract class JamendoApiService {
 
   @GET("/tracks")
   Future<ApiListResponse<Track>> getPopularTracks({
-    @Query("limit") int limit = 20,
+    @Query("limit") int limit = 10,
     @Query("offset") int offset = 0,
     @Query("order") String order = 'popularity_total',
     @Query("imagesize") int imageSize = 200,
+  });
+
+  @GET("/feeds")
+  Future<ApiListResponse<Playlist>> getFeedPlaylists({
+    @Query("limit") int limit = 10,
+    @Query("offset") int offset = 0,
+    @Query("order") String order = 'position_asc',
+    @Query("lang") String lang = 'en',
+    @Query("type") String type = 'playlist',
   });
 }

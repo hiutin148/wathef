@@ -264,10 +264,6 @@ class _HomeChildPageState extends State<HomeChildPage> with AutomaticKeepAliveCl
     );
   }
 
-  Widget _buildBodyWidget() {
-    return Container();
-  }
-
   @override
   void dispose() {
     _cubit.close();

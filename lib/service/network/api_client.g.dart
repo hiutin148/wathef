@@ -21,7 +21,7 @@ class _JamendoApiService implements JamendoApiService {
 
   @override
   Future<ApiListResponse<Track>> getPopularTracks({
-    int limit = 20,
+    int limit = 10,
     int offset = 0,
     String order = 'popularity_total',
     int imageSize = 200,
@@ -51,6 +51,48 @@ class _JamendoApiService implements JamendoApiService {
       _value = ApiListResponse<Track>.fromJson(
         _result.data!,
         (json) => Track.fromJson(json as Map<String, dynamic>),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<ApiListResponse<Playlist>> getFeedPlaylists({
+    int limit = 10,
+    int offset = 0,
+    String order = 'position_asc',
+    String lang = 'en',
+    String type = 'playlist',
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'limit': limit,
+      r'offset': offset,
+      r'order': order,
+      r'lang': lang,
+      r'type': type,
+    };
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<ApiListResponse<Playlist>>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/feeds',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late ApiListResponse<Playlist> _value;
+    try {
+      _value = ApiListResponse<Playlist>.fromJson(
+        _result.data!,
+        (json) => Playlist.fromJson(json as Map<String, dynamic>),
       );
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
