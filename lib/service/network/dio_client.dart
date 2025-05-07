@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:wathef/core/consts/api_consts.dart';
 
 class DioClient {
@@ -17,11 +19,15 @@ class DioClient {
       ),
     );
 
-    // (Tùy chọn) Thêm Interceptors để log request/response
-    _dio.interceptors.add(LogInterceptor(
+    _dio.interceptors.add(PrettyDioLogger(
+      requestHeader: true,
       requestBody: true,
       responseBody: true,
-      logPrint: print, // Hoặc sử dụng logger
+      responseHeader: false,
+      error: true,
+      compact: true,
+      maxWidth: 90,
+      enabled: kDebugMode,
     ));
   }
 

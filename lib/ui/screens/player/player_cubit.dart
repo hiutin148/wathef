@@ -7,7 +7,7 @@ import 'package:wathef/repositories/track_repository.dart';
 import 'package:wathef/service/audio/audio_player_handler.dart';
 import 'package:wathef/ui/widgets/audio_player/common.dart';
 
-part 'home_state.dart';
+part 'player_state.dart';
 
 class PlayerCubit extends Cubit<PlayerState> {
   final TrackRepository trackRepository;
@@ -63,14 +63,14 @@ class PlayerCubit extends Cubit<PlayerState> {
   Future<void> loadInitialData() async {
     emit(state.copyWith(loadDataStatus: LoadStatus.initial));
     try {
-      final response = await trackRepository.getTracks();
-      final mediaItems = response.results
-          .map(
-            (e) => MediaItem(id: e.audio, title: e.name, artUri: Uri.parse(e.image)),
-          )
-          .toList();
-      await audioHandler.updateQueue(mediaItems);
-      emit(state.copyWith(loadDataStatus: LoadStatus.success, mediaItems: mediaItems));
+      // final response = await trackRepository.getTracks();
+      // final mediaItems = response.results
+      //     .map(
+      //       (e) => MediaItem(id: e.audio, title: e.name, artUri: Uri.parse(e.image)),
+      //     )
+      //     .toList();
+      // await audioHandler.updateQueue(mediaItems);
+      emit(state.copyWith(loadDataStatus: LoadStatus.success));
     } catch (e) {
       print(e);
       emit(state.copyWith(loadDataStatus: LoadStatus.failure));

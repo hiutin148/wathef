@@ -1,6 +1,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:get_it/get_it.dart';
 import 'package:wathef/repositories/feeds_repository.dart';
+import 'package:wathef/repositories/playlist_repository.dart';
 import 'package:wathef/repositories/track_repository.dart';
 import 'package:wathef/service/audio/audio_player_handler.dart';
 import 'package:wathef/service/network/api_client.dart';
@@ -22,4 +23,5 @@ Future<void> setupLocator() async {
   locator.registerLazySingleton<JamendoApiService>(() => JamendoApiService(locator<DioClient>().dio));
   locator.registerLazySingleton<TrackRepository>(() => TrackRepositoryImpl(apiService: locator<JamendoApiService>()));
   locator.registerLazySingleton<FeedsRepository>(() => FeedsRepositoryImpl(apiService: locator<JamendoApiService>()));
+  locator.registerLazySingleton<PlaylistRepository>(() => PlaylistRepositoryImpl(apiService: locator<JamendoApiService>()));
 }

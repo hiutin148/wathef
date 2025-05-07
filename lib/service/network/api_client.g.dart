@@ -60,11 +60,10 @@ class _JamendoApiService implements JamendoApiService {
   }
 
   @override
-  Future<ApiListResponse<Playlist>> getFeedPlaylists({
+  Future<ApiListResponse<FeedPlaylist>> getFeedPlaylists({
     int limit = 10,
     int offset = 0,
     String order = 'position_asc',
-    String lang = 'en',
     String type = 'playlist',
   }) async {
     final _extra = <String, dynamic>{};
@@ -72,16 +71,119 @@ class _JamendoApiService implements JamendoApiService {
       r'limit': limit,
       r'offset': offset,
       r'order': order,
-      r'lang': lang,
       r'type': type,
     };
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<ApiListResponse<FeedPlaylist>>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/feeds',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late ApiListResponse<FeedPlaylist> _value;
+    try {
+      _value = ApiListResponse<FeedPlaylist>.fromJson(
+        _result.data!,
+        (json) => FeedPlaylist.fromJson(json as Map<String, dynamic>),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<ApiListResponse<Artist>> getFeedArtists({
+    int limit = 10,
+    int offset = 0,
+    String order = 'position_asc',
+    String type = 'artist',
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'limit': limit,
+      r'offset': offset,
+      r'order': order,
+      r'type': type,
+    };
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<ApiListResponse<Artist>>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/feeds',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late ApiListResponse<Artist> _value;
+    try {
+      _value = ApiListResponse<Artist>.fromJson(
+        _result.data!,
+        (json) => Artist.fromJson(json as Map<String, dynamic>),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<ApiListResponse<Playlist>> getPlaylistById({
+    required List<String> id,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'id': id};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<ApiListResponse<Playlist>>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/feeds',
+            '/playlists',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late ApiListResponse<Playlist> _value;
+    try {
+      _value = ApiListResponse<Playlist>.fromJson(
+        _result.data!,
+        (json) => Playlist.fromJson(json as Map<String, dynamic>),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<ApiListResponse<Playlist>> getPlaylistTracksById({
+    required List<String> id,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'id': id};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<ApiListResponse<Playlist>>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/playlists/tracks',
             queryParameters: queryParameters,
             data: _data,
           )

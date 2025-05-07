@@ -1,9 +1,12 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wathef/locator.dart';
+import 'package:wathef/repositories/track_repository.dart';
 import 'package:wathef/service/audio/audio_player_handler.dart';
 import 'package:wathef/ui/screens/player/player_cubit.dart';
 import 'package:wathef/ui/widgets/audio_player/common.dart';
+
 class ControlButtons extends StatelessWidget {
   final AudioPlayerHandler audioHandler;
 
@@ -45,7 +48,8 @@ class ControlButtons extends StatelessWidget {
             final playbackState = snapshot.data;
             final processingState = playbackState?.processingState;
             final playing = playbackState?.playing;
-            if (processingState == AudioProcessingState.loading || processingState == AudioProcessingState.buffering) {
+            if (processingState == AudioProcessingState.loading ||
+                processingState == AudioProcessingState.buffering) {
               return Container(
                 margin: const EdgeInsets.all(8.0),
                 width: 64.0,
@@ -80,7 +84,8 @@ class ControlButtons extends StatelessWidget {
         StreamBuilder<double>(
           stream: audioHandler.speed,
           builder: (context, snapshot) => IconButton(
-            icon: Text("${snapshot.data?.toStringAsFixed(1)}x", style: const TextStyle(fontWeight: FontWeight.bold)),
+            icon: Text("${snapshot.data?.toStringAsFixed(1)}x",
+                style: const TextStyle(fontWeight: FontWeight.bold)),
             onPressed: () {
               showSliderDialog(
                 context: context,
@@ -100,14 +105,29 @@ class ControlButtons extends StatelessWidget {
   }
 }
 
-class HomeChildPage extends StatefulWidget  {
-  const HomeChildPage({super.key});
+class PlayerPage extends StatelessWidget {
+  const PlayerPage({super.key});
 
   @override
-  State<HomeChildPage> createState() => _HomeChildPageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => PlayerCubit(
+        trackRepository: locator<TrackRepository>(),
+        audioHandler: locator<AudioPlayerHandler>(),
+      ),
+      child: PlayerChildPage(),
+    );
+  }
 }
 
-class _HomeChildPageState extends State<HomeChildPage> with AutomaticKeepAliveClientMixin {
+class PlayerChildPage extends StatefulWidget {
+  const PlayerChildPage({super.key});
+
+  @override
+  State<PlayerChildPage> createState() => _PlayerChildPageState();
+}
+
+class _PlayerChildPageState extends State<PlayerChildPage> with AutomaticKeepAliveClientMixin {
   late final PlayerCubit _cubit;
 
   @override
@@ -121,6 +141,7 @@ class _HomeChildPageState extends State<HomeChildPage> with AutomaticKeepAliveCl
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
+      appBar: AppBar(),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -158,7 +179,8 @@ class _HomeChildPageState extends State<HomeChildPage> with AutomaticKeepAliveCl
             StreamBuilder<PositionData>(
               stream: _cubit.positionDataStream,
               builder: (context, snapshot) {
-                final positionData = snapshot.data ?? PositionData(Duration.zero, Duration.zero, Duration.zero);
+                final positionData =
+                    snapshot.data ?? PositionData(Duration.zero, Duration.zero, Duration.zero);
                 return SeekBar(
                   duration: positionData.duration,
                   position: positionData.position,
@@ -173,7 +195,8 @@ class _HomeChildPageState extends State<HomeChildPage> with AutomaticKeepAliveCl
             Row(
               children: [
                 StreamBuilder<AudioServiceRepeatMode>(
-                  stream: _cubit.audioHandler.playbackState.map((state) => state.repeatMode).distinct(),
+                  stream:
+                      _cubit.audioHandler.playbackState.map((state) => state.repeatMode).distinct(),
                   builder: (context, snapshot) {
                     final repeatMode = snapshot.data ?? AudioServiceRepeatMode.none;
                     const icons = [
@@ -190,7 +213,8 @@ class _HomeChildPageState extends State<HomeChildPage> with AutomaticKeepAliveCl
                     return IconButton(
                       icon: icons[index],
                       onPressed: () {
-                        _cubit.audioHandler.setRepeatMode(cycleModes[(cycleModes.indexOf(repeatMode) + 1) % cycleModes.length]);
+                        _cubit.audioHandler.setRepeatMode(
+                            cycleModes[(cycleModes.indexOf(repeatMode) + 1) % cycleModes.length]);
                       },
                     );
                   },
@@ -203,14 +227,19 @@ class _HomeChildPageState extends State<HomeChildPage> with AutomaticKeepAliveCl
                   ),
                 ),
                 StreamBuilder<bool>(
-                  stream: _cubit.audioHandler.playbackState.map((state) => state.shuffleMode == AudioServiceShuffleMode.all).distinct(),
+                  stream: _cubit.audioHandler.playbackState
+                      .map((state) => state.shuffleMode == AudioServiceShuffleMode.all)
+                      .distinct(),
                   builder: (context, snapshot) {
                     final shuffleModeEnabled = snapshot.data ?? false;
                     return IconButton(
-                      icon: shuffleModeEnabled ? const Icon(Icons.shuffle, color: Colors.orange) : const Icon(Icons.shuffle, color: Colors.grey),
+                      icon: shuffleModeEnabled
+                          ? const Icon(Icons.shuffle, color: Colors.orange)
+                          : const Icon(Icons.shuffle, color: Colors.grey),
                       onPressed: () async {
                         final enable = !shuffleModeEnabled;
-                        await _cubit.audioHandler.setShuffleMode(enable ? AudioServiceShuffleMode.all : AudioServiceShuffleMode.none);
+                        await _cubit.audioHandler.setShuffleMode(
+                            enable ? AudioServiceShuffleMode.all : AudioServiceShuffleMode.none);
                       },
                     );
                   },

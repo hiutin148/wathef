@@ -46,22 +46,6 @@ class AudioPlayerHandlerImpl extends BaseAudioHandler with SeekHandler implement
   final BehaviorSubject<double> speed = BehaviorSubject.seeded(1.0);
   final _mediaItemExpando = Expando<MediaItem>();
 
-  // Stream<List<IndexedAudioSource>> get _effectiveSequence => Rx.combineLatest3<
-  //     List<IndexedAudioSource>?,
-  //     List<int>?,
-  //     bool,
-  //     List<IndexedAudioSource>?>(_player.sequenceStream,
-  //     _player.shuffleIndicesStream, _player.shuffleModeEnabledStream,
-  //         (sequence, shuffleIndices, shuffleModeEnabled) {
-  //       if (sequence == null) return [];
-  //       if (!shuffleModeEnabled) return sequence;
-  //       if (shuffleIndices == null) return null;
-  //
-  //       if (sequence.isEmpty && shuffleIndices.isEmpty) return [];
-  //       if (shuffleIndices.length != sequence.length) return null;
-  //       return shuffleIndices.map((i) => sequence[i]).toList();
-  //     }).whereType<List<IndexedAudioSource>>();
-
   int? getQueueIndex(int? currentIndex, bool shuffleModeEnabled, List<int>? shuffleIndices) {
     final effectiveIndices = _player.effectiveIndices;
 
