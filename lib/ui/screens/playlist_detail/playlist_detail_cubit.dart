@@ -1,4 +1,5 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:wathef/locator.dart';
@@ -33,7 +34,7 @@ class PlaylistDetailCubit extends Cubit<PlaylistDetailState> {
         ));
       }
     } catch (e) {
-      print(e);
+      debugPrint(e.toString());
       emit(state.copyWith(loadDataStatus: LoadStatus.failure));
     }
   }

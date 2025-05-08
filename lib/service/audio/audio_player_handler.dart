@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
+import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -17,7 +18,8 @@ class QueueState {
 
   bool get hasPrevious => repeatMode != AudioServiceRepeatMode.none || (queueIndex ?? 0) > 0;
 
-  bool get hasNext => repeatMode != AudioServiceRepeatMode.none || (queueIndex ?? 0) + 1 < queue.length;
+  bool get hasNext =>
+      repeatMode != AudioServiceRepeatMode.none || (queueIndex ?? 0) + 1 < queue.length;
 
   List<int> get indices => shuffleIndices ?? List.generate(queue.length, (i) => i);
 }
@@ -34,7 +36,9 @@ abstract class AudioPlayerHandler implements AudioHandler {
   ValueStream<double> get speed;
 }
 
-class AudioPlayerHandlerImpl extends BaseAudioHandler with SeekHandler implements AudioPlayerHandler {
+class AudioPlayerHandlerImpl extends BaseAudioHandler
+    with SeekHandler
+    implements AudioPlayerHandler {
   final BehaviorSubject<List<MediaItem>> _recentSubject = BehaviorSubject.seeded(<MediaItem>[]);
   final _mediaLibrary = MediaLibrary();
   final _player = AudioPlayer();
@@ -64,10 +68,18 @@ class AudioPlayerHandlerImpl extends BaseAudioHandler with SeekHandler implement
   }
 
   @override
-  Stream<QueueState> get queueState => Rx.combineLatest3<List<MediaItem>, PlaybackState, List<int>?, QueueState>(queue, playbackState, _player.shuffleIndicesStream.startWith(const <int>[]), (queue, playbackState, shuffleIndices) {
+  Stream<QueueState> get queueState =>
+      Rx.combineLatest3<List<MediaItem>, PlaybackState, List<int>?, QueueState>(
+          queue, playbackState, _player.shuffleIndicesStream.startWith(const <int>[]),
+          (queue, playbackState, shuffleIndices) {
         final useShuffleIndices = playbackState.shuffleMode == AudioServiceShuffleMode.all;
 
-        final validShuffleIndices = (useShuffleIndices && shuffleIndices != null && shuffleIndices.isNotEmpty && shuffleIndices.length == queue.length) ? shuffleIndices : null;
+        final validShuffleIndices = (useShuffleIndices &&
+                shuffleIndices != null &&
+                shuffleIndices.isNotEmpty &&
+                shuffleIndices.length == queue.length)
+            ? shuffleIndices
+            : null;
 
         return QueueState(
           queue,
@@ -119,7 +131,7 @@ class AudioPlayerHandlerImpl extends BaseAudioHandler with SeekHandler implement
     final session = await AudioSession.instance;
     await session.configure(const AudioSessionConfiguration.speech());
 
-    final initialMediaItems = _mediaLibrary.items[MediaLibrary.albumsRootId]!;
+    final List<MediaItem> initialMediaItems = [];
 
     final initialAudioSources = initialMediaItems.map(_itemToSource).toList();
     _playlist = ConcatenatingAudioSource(children: initialAudioSources);
@@ -132,7 +144,8 @@ class AudioPlayerHandlerImpl extends BaseAudioHandler with SeekHandler implement
 
     _player.currentIndexStream.listen((index) {
       final currentQueue = queue.value;
-      final effectiveIndex = getQueueIndex(index, _player.shuffleModeEnabled, _player.shuffleIndices);
+      final effectiveIndex =
+          getQueueIndex(index, _player.shuffleModeEnabled, _player.shuffleIndices);
       if (effectiveIndex != null && effectiveIndex < currentQueue.length) {
         mediaItem.add(currentQueue[effectiveIndex]);
       } else {
@@ -164,7 +177,7 @@ class AudioPlayerHandlerImpl extends BaseAudioHandler with SeekHandler implement
     try {
       await _player.setAudioSource(_playlist, initialIndex: 0, preload: true);
     } catch (e) {
-      print("Error setting initial audio source: $e");
+      debugPrint("Error setting initial audio source: $e");
     }
   }
 
@@ -173,7 +186,7 @@ class AudioPlayerHandlerImpl extends BaseAudioHandler with SeekHandler implement
     try {
       uri = Uri.parse(mediaItem.id);
     } catch (e) {
-      print("Error parsing URI for MediaItem ID: ${mediaItem.id}, Error: $e");
+      debugPrint("Error parsing URI for MediaItem ID: ${mediaItem.id}, Error: $e");
 
       throw ArgumentError("Invalid URI in MediaItem ID: ${mediaItem.id}");
     }
@@ -183,7 +196,8 @@ class AudioPlayerHandlerImpl extends BaseAudioHandler with SeekHandler implement
     return audioSource;
   }
 
-  List<AudioSource> _itemsToSources(List<MediaItem> mediaItems) => mediaItems.map(_itemToSource).toList();
+  List<AudioSource> _itemsToSources(List<MediaItem> mediaItems) =>
+      mediaItems.map(_itemToSource).toList();
 
   @override
   Future<List<MediaItem>> getChildren(String parentMediaId, [Map<String, dynamic>? options]) async {
@@ -203,7 +217,9 @@ class AudioPlayerHandlerImpl extends BaseAudioHandler with SeekHandler implement
         return stream.shareValueSeeded(<String, dynamic>{});
       default:
         final items = _mediaLibrary.items[parentMediaId] ?? [];
-        return BehaviorSubject.seeded(items).map((_) => <String, dynamic>{}).shareValueSeeded(<String, dynamic>{});
+        return BehaviorSubject.seeded(items)
+            .map((_) => <String, dynamic>{})
+            .shareValueSeeded(<String, dynamic>{});
     }
   }
 
@@ -256,7 +272,9 @@ class AudioPlayerHandlerImpl extends BaseAudioHandler with SeekHandler implement
       this.mediaItem.add(mediaItem);
     }
 
-    final currentQueueItems = playerSequence.map((s) => _mediaItemExpando[s] ?? MediaItem(id: 'error-${s.hashCode}', title: 'Unknown')).toList();
+    final currentQueueItems = playerSequence
+        .map((s) => _mediaItemExpando[s] ?? MediaItem(id: 'error-${s.hashCode}', title: 'Unknown'))
+        .toList();
     queue.add(currentQueueItems);
   }
 
@@ -268,20 +286,25 @@ class AudioPlayerHandlerImpl extends BaseAudioHandler with SeekHandler implement
         if (index < _playlist.length) {
           await _playlist.removeAt(index);
         } else {
-          print("Error removing item: Index $index out of bounds for playlist length ${_playlist.length}");
+          debugPrint(
+              "Error removing item: Index $index out of bounds for playlist length ${_playlist.length}");
         }
       } catch (e) {
-        print("Error removing item at index $index: $e");
+        debugPrint("Error removing item at index $index: $e");
       }
     }
   }
 
   @override
   Future<void> moveQueueItem(int currentIndex, int newIndex) async {
-    if (currentIndex >= 0 && currentIndex < _playlist.length && newIndex >= 0 && newIndex < _playlist.length) {
+    if (currentIndex >= 0 &&
+        currentIndex < _playlist.length &&
+        newIndex >= 0 &&
+        newIndex < _playlist.length) {
       await _playlist.move(currentIndex, newIndex);
     } else {
-      print("Error moving item: Invalid indices ($currentIndex, $newIndex) for playlist length ${_playlist.length}");
+      debugPrint(
+          "Error moving item: Invalid indices ($currentIndex, $newIndex) for playlist length ${_playlist.length}");
     }
   }
 
@@ -316,7 +339,8 @@ class AudioPlayerHandlerImpl extends BaseAudioHandler with SeekHandler implement
     final playing = _player.playing;
 
     final currentItemIndex = event.currentIndex;
-    final effectiveQueueIndex = getQueueIndex(currentItemIndex, _player.shuffleModeEnabled, _player.shuffleIndices);
+    final effectiveQueueIndex =
+        getQueueIndex(currentItemIndex, _player.shuffleModeEnabled, _player.shuffleIndices);
 
     playbackState.add(playbackState.value.copyWith(
       controls: [
@@ -345,7 +369,8 @@ class AudioPlayerHandlerImpl extends BaseAudioHandler with SeekHandler implement
       bufferedPosition: _player.bufferedPosition,
       speed: _player.speed,
       queueIndex: effectiveQueueIndex,
-      shuffleMode: _player.shuffleModeEnabled ? AudioServiceShuffleMode.all : AudioServiceShuffleMode.none,
+      shuffleMode:
+          _player.shuffleModeEnabled ? AudioServiceShuffleMode.all : AudioServiceShuffleMode.none,
       repeatMode: AudioServiceRepeatMode.values[_player.loopMode.index],
     ));
   }
@@ -371,7 +396,8 @@ class MediaLibrary {
         title: "A Salute To Head-Scratching Science",
         artist: "Science Friday and WNYC Studios",
         duration: const Duration(milliseconds: 5739820),
-        artUri: Uri.parse('https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg'),
+        artUri: Uri.parse(
+            'https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg'),
       ),
       MediaItem(
         id: 'https://s3.amazonaws.com/scifri-segments/scifri201711241.mp3',
@@ -379,7 +405,8 @@ class MediaLibrary {
         title: "From Cat Rheology To Operatic Incompetence",
         artist: "Science Friday and WNYC Studios",
         duration: const Duration(milliseconds: 2856950),
-        artUri: Uri.parse('https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg'),
+        artUri: Uri.parse(
+            'https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg'),
       ),
       MediaItem(
         id: 'https://s3.amazonaws.com/scifri-segments/scifri202011274.mp3',
@@ -387,7 +414,8 @@ class MediaLibrary {
         title: "Laugh Along At Home With The Ig Nobel Awards",
         artist: "Science Friday and WNYC Studios",
         duration: const Duration(milliseconds: 1791883),
-        artUri: Uri.parse('https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg'),
+        artUri: Uri.parse(
+            'https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg'),
       ),
     ],
   };

@@ -54,6 +54,7 @@ class _HomeChildPageState extends State<HomeChildPage> {
         title: Text('Good morning Desta!'),
       ),
       body: LavieCustomScrollView(
+        onRefresh: () => _cubit.fetchFeeds(),
         slivers: [
           _buildFeedPlaylists(),
           _buildPopularArtists(),
@@ -70,7 +71,7 @@ class _HomeChildPageState extends State<HomeChildPage> {
           spacing: 16,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Row(
                 spacing: 12,
                 children: [
@@ -88,7 +89,7 @@ class _HomeChildPageState extends State<HomeChildPage> {
               child: BlocSelector<HomeCubit, HomeState, List<FeedPlaylist>>(
                 builder: (context, playlists) {
                   return ListView.separated(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    padding: EdgeInsets.symmetric(horizontal: 12),
                     scrollDirection: Axis.horizontal,
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
