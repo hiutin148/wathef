@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wathef/models/artist/artist.dart';
 import 'package:wathef/models/enums/load_status.dart';
@@ -27,7 +28,7 @@ class HomeCubit extends Cubit<HomeState> {
         artists: artistResponse.results.cast<Artist>(),
       ));
     } catch (e) {
-      print(e);
+      debugPrint(e.toString());
       emit(state.copyWith(loadStatus: LoadStatus.failure));
     }
   }
